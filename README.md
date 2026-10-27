@@ -14,8 +14,19 @@ Not backed up: `.credentials.json` (log in again), history, sessions, caches.
 
 ## Restore on a new machine
 
+First set up the work GitHub SSH key: generate `~/.ssh/id_ed25519_work`, add its `.pub` to the gerrtrav
+GitHub account, and add this to `~/.ssh/config`, then check with `ssh -T git@github-work`:
+
+```
+Host github-work
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_work
+  IdentitiesOnly yes
+```
+
 ```sh
-git clone <this repo> ~/source/claude-config
+git clone git@github-work:gerrtrav/claude-config.git ~/source/claude-config
 ~/source/claude-config/install.sh
 claude /login
 ```
