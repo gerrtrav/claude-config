@@ -1,0 +1,55 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "sh \"$HOME/.claude/statusline.sh\""
+  },
+  "model": "opus[1m]",
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    },
+    "claude-opus-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "effortLevel": "medium",
+  "theme": "dark",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"%USERPROFILE%\\.claude\\hooks\\notify-windows.ps1\"",
+            "timeout": 30,
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Showplace Cabinetry (bitbucket.org/showplacecabinetry) — inferred from git remote",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public (origin is bitbucket.org, not GitHub — not queryable via gh; no visibility evidence found)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: determine per repository (bitbucket.org origins are not queryable via gh, so branch protection status is generally unknown)",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: The current working repository and its remote(s) only",
+      "**Trusted internal domains**: showplacewood.com and showplacecabinetry.com",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured — determine per repository",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file holding credentials (API keys/tokens, DB passwords, OAuth client secrets), such as .env and its variants — share only with audiences cleared for that project's secrets",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment"
+    ]
+  }
+}

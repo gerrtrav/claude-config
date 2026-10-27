@@ -1,0 +1,62 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify-windows.sh 2>/dev/null || true",
+            "timeout": 30,
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "cc-plugin-you-should-know@builtin": true
+  },
+  "effortLevel": "medium",
+  "theme": "dark",
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Showplace Cabinetry (bitbucket.org/showplacecabinetry) \u2014 inferred from git remote",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public (origin is bitbucket.org, not GitHub \u2014 not queryable via gh; no visibility evidence found)",
+      "**Internal sharing / snippet hosting**: None configured \u2014 treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: determine per repository (bitbucket.org origins are not queryable via gh, so branch protection status is generally unknown)",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured \u2014 assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: The current working repository and its remote(s) only",
+      "**Trusted internal domains**: showplacewood.com and showplacecabinetry.com",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured \u2014 determine per repository",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file holding credentials (API keys/tokens, DB passwords, OAuth client secrets), such as .env and its variants \u2014 share only with audiences cleared for that project's secrets",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured \u2014 fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "**Staging server**: the SSH host `prodev` (prodev:/srv/git/showplace_pro.git, app at /var/www/showplace_pro, site https://pro-staging.showplacewood.com/) is the showplace-pro dev/staging server, not production; production is the host `proprod`",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development",
+      "**Org-specific CLIs**: None configured"
+    ],
+    "allow": [
+      "$defaults",
+      "Editing the showplace-pro staging app's environment file over SSH: `ssh prodev ...` commands that back up /var/www/showplace_pro/.env into the remote home directory and then add, change or remove lines in that .env (for example turning FEATURE_*_ENABLED flags on or off), rewriting it in place with cat/awk/sed so it keeps its www-data ownership. This is staging, not production, and the user has authorized it.",
+      "Read-only access to the showplace-pro production environment: `ssh proprod ...` commands that only read (cat/less/tail/grep of logs and files, ls, git log/status/show, ps, df, systemctl/supervisorctl status), read-only SELECT queries with the readonly_claude production database login, and curl GET requests to https://showplacepro.biz/. The user has authorized reading production."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Any change to the showplace-pro production environment (the `proprod` host, /var/www/showplace_pro there, its database, or https://showplacepro.biz/) without the user's explicit permission in the current conversation: writing, editing or deleting files, running deploy/update scripts, git pull/checkout/reset, composer/yarn installs, artisan commands that write (migrate, cache:clear, tinker, queue:restart), restarting services, or INSERT/UPDATE/DELETE/DDL queries."
+    ]
+  }
+}
