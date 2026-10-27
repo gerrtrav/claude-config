@@ -1,0 +1,48 @@
+Host *
+  ForwardAgent yes
+  AddKeysToAgent yes
+Host app-test-old
+  User gerrtrav@showplacewood.com
+  HostName app-test.showplacewood.com
+Host app-old
+  User gerrtrav@showplacewood.com
+  HostName 192.168.127.170
+Host mrcprod
+  User gerrtrav@showplacewood.com
+  HostName swp-mrc.showplacewood.com
+Host mrctest
+  User gerrtrav@showplacewood.com
+  HostName mrctest.showplacewood.com
+Host app
+  User travisgerry
+  Hostname 192.168.127.85
+Host test
+  User travisgerry
+  Hostname 192.168.127.100
+Host prodev
+  User travisgerry
+  Hostname 192.168.127.105
+Host proprod
+  User travisgerry
+  Hostname 100.94.240.37
+Host proxy1
+  User travisgerry
+  Hostname 192.168.124.36
+Host proxy2
+  User travisgerry
+  Hostname 192.168.124.37
+Host type
+  User ladmin
+  Hostname 192.168.125.26
+Host websphere
+  User websphere
+  Hostname websphere.showplacewood.com
+Host mrc
+  User gerrtrav@showplacewood.com
+  Hostname mrcprod.showplacewood.com
+Host github-work
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_work
+  IdentitiesOnly yes
+IdentitiesOnly yes
