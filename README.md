@@ -9,8 +9,10 @@ Backup of my Claude Code settings for WSL (Ubuntu) and Windows.
 | `windows/` | Windows `settings.json`, `statusline.sh`, `hooks/` | `C:\Users\<me>\.claude\` (copies) |
 | `memory/wsl/<project>/` | Per-project auto-memory | `~/.claude/projects/<project>/memory` (symlinks) |
 | `memory/windows/<project>/` | Per-project auto-memory | `C:\Users\<me>\.claude\projects\<project>\memory` (copies) |
+| `extras/bin/ec-sync` | Electronic catalog sync script | `~/bin/ec-sync` (symlink) |
+| `extras/ssh/config` | SSH host aliases incl. `github-work` (no keys) | `~/.ssh/config` (symlink) |
 
-Not backed up: `.credentials.json` (log in again), history, sessions, caches.
+Not backed up: `.credentials.json` (log in again), SSH keys, history, sessions, caches.
 
 ## Restore on a new machine
 

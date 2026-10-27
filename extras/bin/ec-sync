@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+#
+# ec-sync — copy the electronic catalog (images + database) from app to a ShowPlace Pro server.
+#
+#   ec-sync [--dry-run] [--skip-images] [--skip-db] <proprod|prodev>
+#   ec-sync --setup <host> <source|target>     # one-time MySQL user + ~/.ec-sync.cnf on a host
+#
+# Order of operations:
+#   1. Dump electronic_catalog on app (read-only `ec_sync` MySQL user) into a local temp file and sanity-check it.
+#   2. rsync catalog-images app -> local showplace-pro checkout -> target.
+#   3. Back up the target's electronic_catalog (keeps the last $BACKUP_KEEP).
+#   4. Import the dump on the target.
+#   5. Re-index Parts and Mods in search (scout:import) on the target, so search matches the new data.
+# Images go before the DB so new rows never reference images that aren't there yet.
+# users, sessions and the per-user section tables are not in the dump, so the target keeps its own copies.
+
+set -euo pipefail
+
+SOURCE_HOST=app
+DB=electronic_catalog
+SOURCE_IMAGES=/var/www/electronic-catalog/public/storage/catalog-images
+LOCAL_STORAGE=$HOME/source/showplace-pro/public/storage
+TARGET_APP=/var/www/showplace_pro
+TARGET_STORAGE=$TARGET_APP/public/storage/
+SEARCH_MODELS=('App\Models\Part' 'App\Models\Mod')
+IGNORED_TABLES=(user_section_comments user_section_favorites users sessions)
+MIN_TABLES=40
+BACKUP_KEEP=7
+LOG_DIR=$HOME/logs/ec-sync
+LOG_KEEP=30
+LOCK_FILE=${XDG_RUNTIME_DIR:-/tmp}/ec-sync.lock
+
+# Expanded on the remote host, not locally.
+REMOTE_CNF='$HOME/.ec-sync.cnf'
+REMOTE_BACKUP_DIR='$HOME/ec-sync-backups'
+
+usage() {
+    sed -n '3,7p' "$0" | sed 's/^# \{0,1\}//'
+    exit "${1:-0}"
+}
+
+log() { printf '[%s] %s\n' "$(date '+%F %T')" "$*"; }
+die() { log "ERROR: $*"; exit 1; }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# --setup: create the ec_sync MySQL user on a host and store its password in ~/.ec-sync.cnf there.
+# Runs interactively (sudo prompts for your password). The password is generated on the host and never leaves it.
+# ---------------------------------------------------------------------------------------------------------------------
+setup() {
+    local host=$1 role=$2
+    [[ $role == source || $role == target ]] || usage 1
+
+    local script
+    script=$(cat <<'REMOTE'
+set -euo pipefail
+role=$1 db=$2
+cnf=$HOME/.ec-sync.cnf
+if [[ -e $cnf ]]; then
+    echo "$cnf already exists on $(hostname); remove it to re-run setup."
+    exit 0
+fi
+if [[ $role == source ]]; then
+    grants="SELECT, LOCK TABLES, SHOW VIEW ON \`$db\`.*"
+else
+    grants="ALL PRIVILEGES ON \`$db\`.*"
+fi
+pw=$(head -c 24 /dev/urandom | base64 | tr -d '/+=\n')
+sudo mysql <<SQL
+CREATE USER IF NOT EXISTS 'ec_sync'@'localhost' IDENTIFIED BY '$pw';
+ALTER USER 'ec_sync'@'localhost' IDENTIFIED BY '$pw';
+GRANT $grants TO 'ec_sync'@'localhost';
+SQL
+(umask 077; printf '[client]\nuser=ec_sync\npassword=%s\n' "$pw" > "$cnf")
+mysql --defaults-file="$cnf" -e 'SELECT 1' "$db" > /dev/null
+echo "ec_sync ($role) ready on $(hostname); credentials in $cnf"
+REMOTE
+)
+    local b64
+    b64=$(printf '%s' "$script" | base64 -w0)
+    ssh -t "$host" "bash -c \"\$(echo $b64 | base64 -d)\" ec-sync-setup $role $DB"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Sync
+# ---------------------------------------------------------------------------------------------------------------------
+DRY_RUN=0
+SKIP_IMAGES=0
+SKIP_DB=0
+TARGET=
+
+while (($#)); do
+    case $1 in
+        --dry-run) DRY_RUN=1 ;;
+        --skip-images) SKIP_IMAGES=1 ;;
+        --skip-db) SKIP_DB=1 ;;
+        --setup) shift; (($# == 2)) || usage 1; setup "$1" "$2"; exit ;;
+        -h|--help) usage ;;
+        -*) usage 1 ;;
+        *) [[ -z $TARGET ]] || usage 1; TARGET=$1 ;;
+    esac
+    shift
+done
+
+case $TARGET in
+    proprod|prodev) ;;
+    *) usage 1 ;;
+esac
+
+mkdir -p "$LOG_DIR"
+STAMP=$(date +%Y%m%d-%H%M%S)
+LOG=$LOG_DIR/$TARGET-$STAMP.log
+exec > >(tee -a "$LOG") 2>&1
+
+exec 9> "$LOCK_FILE"
+flock -n 9 || die "another ec-sync is already running ($LOCK_FILE)"
+
+WORK=$(mktemp -d)
+STEP=startup
+trap 'rc=$?; rm -rf "$WORK"; ((rc == 0)) || log "FAILED during: $STEP (log: $LOG)"' EXIT
+
+((DRY_RUN)) && log "DRY RUN — nothing will be changed on $TARGET"
+log "Syncing $DB from $SOURCE_HOST to $TARGET"
+
+if ! ((SKIP_DB)); then
+    STEP="preflight"
+    for host in "$SOURCE_HOST" "$TARGET"; do
+        ssh "$host" "mysql --defaults-file=$REMOTE_CNF -e 'SELECT 1' $DB > /dev/null" \
+            || die "can't connect to MySQL as ec_sync on $host — run: ec-sync --setup $host $([[ $host == "$SOURCE_HOST" ]] && echo source || echo target)"
+    done
+
+    STEP="dump on $SOURCE_HOST"
+    log "Dumping $DB on $SOURCE_HOST"
+    ignore_args=$(printf -- "--ignore-table=$DB.%s " "${IGNORED_TABLES[@]}")
+    ssh "$SOURCE_HOST" "mysqldump --defaults-file=$REMOTE_CNF --single-transaction --no-tablespaces \
+        --skip-triggers --complete-insert $ignore_args $DB | gzip" > "$WORK/dump.sql.gz"
+
+    STEP="validate dump"
+    gzip -t "$WORK/dump.sql.gz" || die "dump is not a valid gzip file"
+    tables=$(zcat "$WORK/dump.sql.gz" | grep -c '^CREATE TABLE' || true)
+    ((tables >= MIN_TABLES)) || die "dump only has $tables tables (expected at least $MIN_TABLES)"
+    zcat "$WORK/dump.sql.gz" | tail -n 1 | grep -q '^-- Dump completed' || die "dump is truncated"
+    log "Dump OK: $tables tables, $(du -h "$WORK/dump.sql.gz" | cut -f1) compressed"
+fi
+
+if ! ((SKIP_IMAGES)); then
+    # --no-times: we can't set mtimes on the www-data-owned files on the target, so mtimes never match.
+    # --size-only: compare by size instead; uploads always get new random filenames, so files never change in place.
+    rsync_args=(-a --exclude='.*' --no-times --no-perms --size-only --stats)
+    ((DRY_RUN)) && rsync_args+=(--dry-run)
+
+    STEP="rsync images $SOURCE_HOST -> local"
+    log "Pulling catalog-images from $SOURCE_HOST"
+    mkdir -p "$LOCAL_STORAGE"
+    rsync "${rsync_args[@]}" "$SOURCE_HOST:$SOURCE_IMAGES" "$LOCAL_STORAGE/" | grep -E 'Number of (regular )?files transferred|Total transferred'
+
+    STEP="rsync images local -> $TARGET"
+    log "Pushing catalog-images to $TARGET"
+    rsync "${rsync_args[@]}" "$LOCAL_STORAGE/catalog-images" "$TARGET:$TARGET_STORAGE" | grep -E 'Number of (regular )?files transferred|Total transferred'
+fi
+
+if ! ((SKIP_DB)) && ! ((DRY_RUN)); then
+    STEP="backup on $TARGET"
+    log "Backing up $DB on $TARGET"
+    ssh "$TARGET" "set -euo pipefail
+        mkdir -p $REMOTE_BACKUP_DIR
+        mysqldump --defaults-file=$REMOTE_CNF --single-transaction --no-tablespaces $DB \
+            | gzip > $REMOTE_BACKUP_DIR/$DB-$STAMP.sql.gz
+        ls -1t $REMOTE_BACKUP_DIR/$DB-*.sql.gz | tail -n +$((BACKUP_KEEP + 1)) | xargs -r rm --"
+
+    STEP="import on $TARGET"
+    log "Importing $DB on $TARGET"
+    # The view's DEFINER is root@localhost, which ec_sync isn't allowed to set; let it default to ec_sync.
+    zcat "$WORK/dump.sql.gz" \
+        | sed -E 's/DEFINER=`[^`]+`@`[^`]+`//' \
+        | ssh "$TARGET" "mysql --defaults-file=$REMOTE_CNF $DB"
+
+    STEP="scout:import on $TARGET"
+    log "Re-indexing search on $TARGET: ${SEARCH_MODELS[*]}"
+    # Run as the www-data group with a group-writable umask: the app runs as www-data, and cache/log files
+    # created as our own group would make its later writes fail.
+    # ssh joins its arguments into one remote command line, so quote them to keep the backslashes.
+    ssh "$TARGET" "bash -s -- $(printf '%q ' "$TARGET_APP" "${SEARCH_MODELS[@]}")" <<'REMOTE'
+set -euo pipefail
+cd "$1"
+shift
+for model in "$@"; do
+    sg www-data -c "umask 002; php artisan scout:import '$model'"
+done
+REMOTE
+fi
+
+STEP="cleanup"
+ls -1t "$LOG_DIR"/*.log | tail -n +$((LOG_KEEP + 1)) | xargs -r rm --
+log "Done"

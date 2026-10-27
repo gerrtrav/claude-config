@@ -46,6 +46,13 @@ for d in "$repo"/memory/wsl/*/; do
     link "memory/wsl/$p" "$claude/projects/$p/memory"
 done
 
+# Work shell scripts and SSH host aliases (keys themselves are not in this repo)
+link extras/bin/ec-sync "$HOME/bin/ec-sync"
+if [ -f "$repo/extras/ssh/config" ]; then
+    mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+    link extras/ssh/config "$HOME/.ssh/config"
+fi
+
 # Windows (only when running under WSL with the Windows drive mounted)
 if [ -d "/mnt/c/Users/${win_user:-$USER}" ]; then
     mkdir -p "$win/hooks"
