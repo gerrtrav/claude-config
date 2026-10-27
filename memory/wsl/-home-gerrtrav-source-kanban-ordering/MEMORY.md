@@ -1,0 +1,2 @@
+- [EVOX Jira workflow](evox-jira-workflow.md) — required create fields; Done needs Component + Assignee set first; Parking Lot tickets can't be moved to In Progress by the user
+- [EVOX-730 DB objects deployed](evox-730-db-objects-deployed.md) — reorder-point view + missing-item log table live on Insight since 2026-10-07

@@ -1,0 +1,1 @@
+- [Release tag format](release-tag-format.md) — tags are release-YYYY.MM.DD, not v<branch>

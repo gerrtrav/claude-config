@@ -1,0 +1,78 @@
+- [jira-parking-lot-to-in-progress](jira-parking-lot-to-in-progress.md) — How to move an SPPRO Jira ticket from Parking Lot to In Progress; the user…
+- [ithd-finish-internal-qa-note](ithd-finish-internal-qa-note.md) — When an ITHD ticket's work is merged, leave it In Progress and post the QA…
+- [local-login-superadmin](local-login-superadmin.md) — To log in to the local showplace-pro app (e.g. for browser testing), use…
+- [git-workflow-preferences](git-workflow-preferences.md) — Always branch before any code change (never work on master); small commits; land by rebase + local ff merge
+- [jira-finish-to-qa](jira-finish-to-qa.md) — When an SPPRO ticket is finished: land, push to prodev (and origin) first, then post QA instructions and move to Quality Audit
+- [jira-ticket-workflow](jira-ticket-workflow.md) — Always transition a Jira ticket to "In Progress" when starting work on it
+- [quote-open-refreshes-pricing](quote-open-refreshes-pricing.md) — Opening a quote refreshes its pricing and editing job info locks it, so…
+- [production-log-rotation](production-log-rotation.md) — laravel.log rotated by system logrotate (no daily channel); auth.log rotates via logs:rotate-auth
+- [jira-comment-tone](jira-comment-tone.md) — Jira ticket comment tone depends on the project: customer-facing for ITHD, developer-facing otherwise
+- [prefer-permissions-over-roles](prefer-permissions-over-roles.md) — When implementing authorization/access-control logic, gate on a Spatie…
+- [ithd-draft-comments-only](ithd-draft-comments-only.md) — Never write to ITHD tickets; give the user the comment text to post themselves
+- [local-capacity-test-data](local-capacity-test-data.md) — Local DB has no capacity headers/scheduled quotes; how to seed them to browser-test capacity
+- [frontier-entered-date-pricing](frontier-entered-date-pricing.md) — OHP OHENTM/OHENTY drives pricing and auto-reprices; encode via SWPSYS040.DATES
+- [staging-remote-prodev](staging-remote-prodev.md) — "Push to dev/staging" = `git push prodev master`; auto-deploys; site is https://pro-staging.showplacewood.com/
+- [staging-dealer-login](staging-dealer-login.md) — Staging dealer login tiffany@reposakitchens.com (profile now on SH2200 since 2026-10-20); password in $STAGING_APP_PASSWORD
+- [missing-field-check-typo-first](missing-field-check-typo-first.md) — A check on a non-existent field is probably a typo of a real column (orders_status → order_status); fix it, don't delete it
+- [production-readonly-db](production-readonly-db.md) — Query prod read-only: host 100.94.240.37 (not the ProxySQL IP), user readonly_claude, $PROD_RO_DB_PASSWORD, via Sail mariadb client
+- [order-amount-columns-exclusive](order-amount-columns-exclusive.md) — orders rows fill only quote_amount OR order_amount, so totalAmount() (their sum) is correct as-is
+- [deploy-scripts-locations](deploy-scripts-locations.md) — Both servers use release-folder deploys since 2026-10-21 (SPPRO-5071): prodev hook per master push, proprod per release-YYMMDD tag; showplace-pro-activate rollback; old notes on update_showplace_pro, Node versions, prodev .env edits
+- [sail-container-uid-mismatch](sail-container-uid-mismatch.md) — Mass test failures writing storage/ = app container sail uid 1337; recreate via sail up
+- [accounts-table-future-spec](accounts-table-future-spec.md) — sppro.accounts + account_view are unused placeholders for a future spec; plan against sppro.account
+- [marketing-subscription-lists-pending](marketing-subscription-lists-pending.md) — Waiting on Justin; then attach marketing CSVs to SPPRO-4802/4803 via user-provided Jira token
+- [create-test-quotes-allowed](create-test-quotes-allowed.md) — May create new test quotes/orders on staging and local without asking; existing quotes still need OK
+- [prodev-tinker-breaks-cache-perms](prodev-tinker-breaks-cache-perms.md) — artisan/tinker on prodev as travisgerry leaves cache dirs www-data cannot write → staging 500s; fix with chgrp www-data
+- [jira-ticket-plain-language-section](jira-ticket-plain-language-section.md) — New Jira tickets need a plain-language section for non-programmers, not just the developer details
+- [qa-instructions-general-overview](qa-instructions-general-overview.md) — QA instructions = general overview of what to test, not exact step-by-step scripts
+- [production-patch-files](production-patch-files.md) — RETIRED 2026-10-21: prod deploys release-YYMMDD tags now, not patch files (history only)
+- [production-site-url](production-site-url.md) — Prod site is https://showplacepro.biz/ (not in repo); curl it to check live headers/cookies
+- [single-feature-flag-for-fixes](single-feature-flag-for-fixes.md) — Flag a fix with one FEATURE_<NAME>_ENABLED toggle, not the internal/all-users pair
+- [no-rovo-mcp](no-rovo-mcp.md) — Rovo MCP is gone; never call Atlassian_Rovo tools, use Atlassian_MCP tools for Jira/Confluence
+- [production-read-only-unless-approved](production-read-only-unless-approved.md) — Read prod freely; never change prod without the user's explicit OK
+- [livewire-nested-array-payload](livewire-nested-array-payload.md) — Big lists as arrays-of-arrays bloat Livewire snapshots (79→599 KB); use persisted computed instead
+- [sail-exec-runs-as-root](sail-exec-runs-as-root.md) — sail exec runs as root; tests run that way leave root-owned storage dirs → permission failures
+- [webdocs-dms-folders](webdocs-dms-folders.md) — Webdocs 80478CB5 = testing folder (staging, keep it); prod DMS folder is E5044028-3B0F-…
+- [untracking-files-deletes-on-deploy](untracking-files-deletes-on-deploy.md) — Untracking files in a commit deletes them on servers at deploy (reset --hard); back them up first
+- [server-sudo-changes-shad](server-sudo-changes-shad.md) — Sudo server changes: write the commands on the ticket; ask before reassigning to Shad Kaske (the user may handle it)
+- [no-parallel-tests](no-parallel-tests.md) — Never use `artisan test --parallel` (no ParaTest; exits 0 without running tests); run serially
+- [full-test-suite-save-output](full-test-suite-save-output.md) — Full suite ~8 min (1890 tests): run_in_background + log file, never `&` or pgrep watchers; OA… account-key collisions are a known flake
+- [jira-qa-docs-subtasks-sarah](jira-qa-docs-subtasks-sarah.md) — QA/doc tickets for an epic → Tasks under the epic for Sarah Kirchner, Triage; never add blocking links to the QA or docs tickets (user does it); API cannot delete issues/links
+- [upload-size-tracking-waiting](upload-size-tracking-waiting.md) — SPPRO-4871 done 10-27 (1 GB, tracking removed); drop of upload_size_logs = SPPRO-5179, only after a1cc7460b is in prod
+- [livewire-flash-message-morph](livewire-flash-message-morph.md) — Flash message inside a Livewire component vanishes next update, shifts siblings → "Snapshot missing"; wrap it in an always-rendered div
+- [jira-comment-mentions](jira-comment-mentions.md) — @mention in Jira comments: HTML span data-type="mention" data-user-id; the <custom> read shape posts as literal text
+- [dms-backfill-lost-files-pending](dms-backfill-lost-files-pending.md) — SPPRO-4975: 88 DMS files deleted by the backfill; parked awaiting the user's choice of fix
+- [production-single-web-server](production-single-web-server.md) — Prod has one web server; files queue workers write to storage/app are servable without shared storage
+- [staging-email-redirect](staging-email-redirect.md) — Anything run on staging that would send email: redirect all recipients to gerrtrav@showplacewood.com
+- [tt-ticket-mirrors-sppro](tt-ticket-mirrors-sppro.md) — TT tickets mirror SPPRO ones; user closes TT (Done, id 41) once SPPRO goes to QA
+- [cso-production-server](cso-production-server.md) — Color Select Ordering prod = ssh `app` (swp-nginx-prod), /var/www/colorselectordering, manual git pull
+- [internal-screenshots-onedrive](internal-screenshots-onedrive.md) — Staging screenshots with dealer data go to OneDrive 1.Documentation/QA/<ticket>, not Jira (classifier blocks; M365 upload caps 1 MB)
+- [local-default-db-connection-dms](local-default-db-connection-dms.md) — Local default DB was dms (last DB_CONNECTION wins); switched to mysql-pro 2026-10-15 after moving migrations rows to sppro
+- [jira-default-assignee-space-admin](jira-default-assignee-space-admin.md) — No assignee given → assign to the space Access "Administrator" role holder (ask if several)
+- [crm-integration-vendor-unknown](crm-integration-vendor-unknown.md) — Outside-CRM import: requester is rep firm KBS New England (via Andrew Gilbert, skeptical); CRM vendor unknown; scope to rep accounts; 2026-10-26 BisTrack dealer wants its orders pushed into BisTrack
+- [sppro-update-type-required](sppro-update-type-required.md) — SPPRO creates need customfield_10051 Update Type (Release Update = 10022) except Sub-tasks (400); Administrators role via REST project/SPPRO/role
+- [frontier-config-sync-production-only](frontier-config-sync-production-only.md) — configuration_codes/segments Frontier sync stays production-only; reload staging/local by hand, never schedule it there
+- [confluence-showplace-pro-folder](confluence-showplace-pro-folder.md) — Confluence docs for this project go in the Showplace Pro space, no folder
+- [frontier-odbc-php85-ccsid](frontier-odbc-php85-ccsid.md) — PHP 8.5 ODBC returns NULL for Frontier CHAR values with NBSP etc.; CAST(... CCSID 1208) fixes
+- [worktree-test-setup](worktree-test-setup.md) — Worktree tests: vendor symlink silently runs MAIN app code; copy composer/autoload/phpunit, exec -u sail, LF copies for Pint
+- [release-tag-naming](release-tag-naming.md) — Prod release tags are release-YYMMDD, second same-day release -2; partial release pushes <sha>:master to proprod
+- [frontier-display-pricing-key-dd](frontier-display-pricing-key-dd.md) — Display pricing = "DD" on order OHP.OHPRKY (466DD), not account accmprky
+- [sail-tinker-script-stdin](sail-tinker-script-stdin.md) — Pipe tinker scripts on stdin; a host /tmp path argument hangs
+- [composer-laravel11-block-insecure](composer-laravel11-block-insecure.md) — On Laravel 11 plain composer update fails (block-insecure); targeted updates; symfony/console held <7.4 until Laravel 12
+- [atlassian-mcp-timeout-writes-apply](atlassian-mcp-timeout-writes-apply.md) — Timed-out Jira MCP writes may still apply; read back before retrying
+- [dealer-portal-sso](dealer-portal-sso.md) — Dealer Portal is vendor WordPress, IP-restricted (no public pages); SSO role = portal-only users; SSO plan 2026-10-21
+- [commands-for-user-in-final-message](commands-for-user-in-final-message.md) — Commands the user must run go in the final reply; mid-turn text did not reach them
+- [sppro-ready-for-testing-means-passed](sppro-ready-for-testing-means-passed.md) — SPPRO "Ready For Testing" = passed QA; "Ready for QA" = still needs QA; Problem sub-tasks only go to Done
+- [release-announcement-email](release-announcement-email.md) — After each prod release: create Jira release release-YYMMDD + fixVersions; draft Outlook email (shipped + waiting on QA) To Sarah Kirchner & Mayas Knaizeh, CC Andrew Gilbert
+- [staging-db-proxy-replica-lag](staging-db-proxy-replica-lag.md) — Staging DB host is a proxy splitting reads to a lagging replica; stale reads after redirects (SPPRO-2141/5104); how to query staging DB
+- [staging-debugbar-disabled](staging-debugbar-disabled.md) — Staging APP_DEBUG=true; Debugbar off via DEBUGBAR_ENABLED=false since 2026-10-22 (its JS froze big Livewire pages); block it locally when profiling
+- [prodev-hook-edit-blocked](prodev-hook-edit-blocked.md) — Auto mode blocks ssh edits of prodev post-receive even with chat OK; give the user a `!` command
+- [proprod-diverged-cherry-pick](proprod-diverged-cherry-pick.md) — proprod master has SPPRO-5135 cherry-picks (release-261026-2); next full release needs `+master` force push
+- [frontier-dmsfundprd-combined-dealers](frontier-dmsfundprd-combined-dealers.md) — Combined DMS dealers = Frontier DMSFUNDPRD.COMBINE_DEALERS (COMBI00001); DMSFUNDPRD has other DMS tables
+- [livewire-38-prod-404-rollback](livewire-38-prod-404-rollback.md) — prod Livewire 404s: partial release-261026-2 lacked SPPRO-3471 mod-key fix; release-261026-3 fixes; diff release vs master first
+- [legacy-site-retirement](legacy-site-retirement.md) — SPPRO-5144 legacy.showplacepro.biz retirement: file locations, shared docroot with proapi, user decisions, task keys 5145-5154
+- [shared-checkout-check-branch](shared-checkout-check-branch.md) — Other sessions share this checkout and switch branches; check current branch before rebase/merge
+- [users-email-stray-spaces](users-email-stray-spaces.md) — users.email can have trailing spaces; MariaDB matches them, so trim before keying PHP arrays by email
+- [catalog-2020-sharepoint-publish](catalog-2020-sharepoint-publish.md) — SPPRO-5162: 2020 catalogs via SharePoint + in-app Publish; site TBD; publishers Beth Roush + IT
+- [confluence-tech-docs-lean-pass](confluence-tech-docs-lean-pass.md) — Multi-day Confluence doc pass: parent page 681377793, days done/remaining, prod schema export in ~/schema-export for the data model page
+- [confluence-update-tech-docs-on-feature-change](confluence-update-tech-docs-on-feature-change.md) — When changing/adding a feature, update the matching page under Confluence "Showplace Pro Technical Documentation" (681377793)
+- [frontier-db2-driver-laravel13](frontier-db2-driver-laravel13.md) — BWI db2-driver abandoned, max Laravel 12; easi-power/laravel-db2 v14 = Laravel 13 path (Print App staging uses it)

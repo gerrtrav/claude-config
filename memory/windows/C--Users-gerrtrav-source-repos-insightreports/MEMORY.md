@@ -1,0 +1,1 @@
+- [Jira attachments via REST](jira-attachments-via-rest.md) — MCP can't attach; use JIRA_EMAIL/JIRA_API_TOKEN user env vars

@@ -1,0 +1,3 @@
+- [ec-sync](ec-sync.md) — ~/bin/ec-sync copies electronic_catalog DB + images app → proprod/prodev
+- [Kanban deploy](kanban-deploy.md) — `git deploy` tags main release-YYYY.MM.DD and pushes to origin + prod /srv/git/kanban.git
+- [deploy-hooks](deploy-hooks.md) — shared /srv/git post-receive hooks live in ~/source/deploy-hooks; roll out with install.sh
