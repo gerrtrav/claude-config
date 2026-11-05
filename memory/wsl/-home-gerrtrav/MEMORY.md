@@ -2,3 +2,5 @@
 - [Kanban deploy](kanban-deploy.md) — `git deploy` tags main release-YYYY.MM.DD and pushes to origin + prod /srv/git/kanban.git
 - [deploy-hooks](deploy-hooks.md) — shared /srv/git post-receive hooks live in ~/source/deploy-hooks; roll out with install.sh
 - [settings-backup](settings-backup.md) — dotfiles/Claude settings backed up in 3 GitHub repos; how edits flow back
+- [sudo-needs-own-terminal](sudo-needs-own-terminal.md) — server sudo needs a password; give the user commands for their own terminal, not `!`
+- [documentupload deploy](documentupload-deploy.md) — atomic deploys on test+prod (DU-29); switch-over punch list in deploy-hooks/docs

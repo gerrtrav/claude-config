@@ -13,3 +13,5 @@ Name production release tags `release-YYMMDD` (e.g. `release-261020` for 2026-10
 **Why:** the user stated this convention when releasing kanban_ordering EVOX-730 on 2026-10-20; the hook's own comment shows `release-2026.10.19`, which is not the convention.
 
 **How to apply:** for apps deployed via the shared prod hook (e.g. kanban_ordering), annotated tag on the branch tip, push branch + tag to prod, then the tag to origin. If two releases happen on the same day, suffix the later tag `-2` (then `-3`): the user chose `release-261022-2` for showplace-pro's second release on 2026-10-22. For a partial showplace-pro release, push the tag commit as proprod's master (`git push --atomic proprod <sha>:refs/heads/master release-YYMMDD-N`) so proprod master stays equal to what is live.
+
+proprod's bare repo has receive.denyNonFastForwards, so `+master` force pushes are rejected. After a partial (cherry-picked) release, the next full release first merges proprod's master into master with `git merge -s ours <last partial tag>` (tree unchanged), then fast-forwards. Done this way for release-261028 (merge f2b8dc6d6).

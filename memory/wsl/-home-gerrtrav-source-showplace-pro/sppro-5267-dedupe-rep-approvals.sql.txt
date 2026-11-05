@@ -1,0 +1,67 @@
+-- SPPRO-5267: remove duplicate rep approval rows (database: sppro).
+--
+-- MainOrder::setShipWeek() used to add a new pending approval row each time a display or personal-use quote
+-- was scheduled, so rescheduled quotes have several rows. A quote with a decided row plus a pending row stays
+-- on the Displays "Awaiting Review" list. Keep exactly one row per quote:
+--   1. a decided row (approved or declined) beats a pending one,
+--   2. among decided rows, the most recent decision (raapprovetime) wins,
+--   3. otherwise the earliest row (lowest raid = original request) wins.
+-- Nothing else references raid. Run it only after the setShipWeek fix is deployed, or new duplicates appear.
+--
+-- Run it all in one session. It ends in ROLLBACK: check the output, then change ROLLBACK to COMMIT and rerun.
+
+-- 1. Preview: every row of a duplicated quote, and whether it is kept.
+WITH ranked AS (
+    SELECT 'display' AS type, raid, raorder, raapproved, radeclined, rarequesttime, raapprovetime,
+           ROW_NUMBER() OVER (PARTITION BY raorder
+               ORDER BY (raapproved = 'X' OR radeclined = 'X') DESC, raapprovetime DESC, raid) AS rn,
+           COUNT(*) OVER (PARTITION BY raorder) AS n
+    FROM rep_approvals
+    UNION ALL
+    SELECT 'personal', raid, raorder, raapproved, radeclined, rarequesttime, raapprovetime,
+           ROW_NUMBER() OVER (PARTITION BY raorder
+               ORDER BY (raapproved = 'X' OR radeclined = 'X') DESC, raapprovetime DESC, raid),
+           COUNT(*) OVER (PARTITION BY raorder)
+    FROM rep_personal
+)
+SELECT type, raorder, raid, IF(rn = 1, 'KEEP', 'delete') AS action,
+       CASE WHEN raapproved = 'X' THEN 'approved' WHEN radeclined = 'X' THEN 'declined' ELSE 'pending' END AS status,
+       FROM_UNIXTIME(rarequesttime) AS requested, FROM_UNIXTIME(raapprovetime) AS decided
+FROM ranked
+WHERE n > 1
+ORDER BY type, raorder, rn;
+
+-- 2. The rows to delete.
+CREATE TEMPORARY TABLE dedupe_display AS
+SELECT raid FROM (
+    SELECT raid, ROW_NUMBER() OVER (PARTITION BY raorder
+        ORDER BY (raapproved = 'X' OR radeclined = 'X') DESC, raapprovetime DESC, raid) AS rn
+    FROM rep_approvals
+) r WHERE rn > 1;
+
+CREATE TEMPORARY TABLE dedupe_personal AS
+SELECT raid FROM (
+    SELECT raid, ROW_NUMBER() OVER (PARTITION BY raorder
+        ORDER BY (raapproved = 'X' OR radeclined = 'X') DESC, raapprovetime DESC, raid) AS rn
+    FROM rep_personal
+) r WHERE rn > 1;
+
+SELECT (SELECT COUNT(*) FROM dedupe_display) AS display_rows_to_delete,
+       (SELECT COUNT(*) FROM dedupe_personal) AS personal_rows_to_delete;
+
+-- 3. Delete and verify inside a transaction.
+START TRANSACTION;
+
+DELETE FROM rep_approvals WHERE raid IN (SELECT raid FROM dedupe_display);
+DELETE FROM rep_personal WHERE raid IN (SELECT raid FROM dedupe_personal);
+
+-- Both counts must be 0.
+SELECT (SELECT COUNT(*) FROM (SELECT raorder FROM rep_approvals GROUP BY raorder HAVING COUNT(*) > 1) d)
+           AS display_quotes_still_duplicated,
+       (SELECT COUNT(*) FROM (SELECT raorder FROM rep_personal GROUP BY raorder HAVING COUNT(*) > 1) p)
+           AS personal_quotes_still_duplicated;
+
+ROLLBACK; -- change to COMMIT once the output above looks right
+
+DROP TEMPORARY TABLE dedupe_display;
+DROP TEMPORARY TABLE dedupe_personal;

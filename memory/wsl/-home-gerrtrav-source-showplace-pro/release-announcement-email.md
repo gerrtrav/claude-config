@@ -36,3 +36,5 @@ to remember it for the next release.
 **How to apply:** Do it as part of finishing a production release, after checking the deploy (live symlink, REVISION,
 site 200, no new errors, workers restarted). Give the user the draft link; they send it. Related:
 [[release-tag-naming]], [[deploy-scripts-locations]].
+
+Backfill 2026-10-30: every release tag now has a Jira version (release-261021 = 10179, 261026-3/-4/-5 = 10180-10182). release-261021's range starts at aad233130 (what prod ran before the tagged cutover); older commits shipped before versions existed and get none. For partial releases, the master originals of cherry-picks land again in the next full tag: skip commits whose subject matches a cherry-pick already in a partial tag. A ticket can carry several release versions.

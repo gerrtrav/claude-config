@@ -13,3 +13,5 @@ A `<x-session-messages/>` rendered directly inside a Livewire component appears 
 **Why:** it took a long time to find, because the bug only happens on the request right after a flash and nothing is logged server-side.
 
 **How to apply:** if a page breaks only right after a redirect that flashes a message, check this first. Reproduce with the run-showplace-pro driver by calling the action through `Livewire.all()...$wire.method()`, then `errors`.
+
+Second case, SPPRO-5270 (2026-11-05): the conditional "Saving your globals…" box in globals-section.blade.php, a bare sibling before the fieldset of `GlobalGroup` children. Showing or hiding it made the morph re-create the children, and they replayed their *mount-time* dispatched events (`globalCompleted` with orderLocked=true from first load), which overwrote fresh parent state. No JS error, only stale state. Same fix: an always-rendered wrapper div. General rule: any `@if` block placed directly before Livewire child components needs a stable wrapper. Livewire unit tests can't catch this; verify with the run-showplace-pro driver plus temporary `\Log::debug` in the event handlers.

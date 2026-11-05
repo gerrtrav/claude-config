@@ -12,3 +12,5 @@ On 2026-10-22 (SPPRO-5097, adding `--no-dev` to `composer install` in `prodev:/s
 **How to apply:** For prodev deploy-hook edits, give the user the exact `! ssh prodev '...'` command (backup first, edit both copies, diff, `bash -n`) in the final reply, or suggest a Bash permission rule in settings. Related: [[deploy-scripts-locations]], [[commands-for-user-in-final-message]].
 
 2026-10-26 (SPPRO-5145): after the user said "you can update the staging deploy script", editing the prodev post-receive over ssh (sed -i, with a backup in ~) went through without a classifier block.
+
+Also proprod shared .env edits (2026-11-03, SPPRO-5199, removing DS_* lines): blocked as Remote Shell Writes even after the user said "do it"; hand over a `!` command instead.

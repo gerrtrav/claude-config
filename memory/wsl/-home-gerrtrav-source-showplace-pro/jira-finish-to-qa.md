@@ -113,3 +113,37 @@ Bug SPPRO-5070 (2026-10-22, third round from Problem via 4 → 651 → 721 → 1
 Bug SPPRO-5101 (2026-10-22, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. The fix is production-only (chat button renders only under @production), so the user still chose Ready for QA, with QA instructions to check on production after the next release.
 
 Bug SPPRO-5135 (2026-10-22, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5222 (2026-10-30, DMS year-end job fix, already run on staging): user said "No need for QA. move it to Done." Ready for QA → Done (591); stayed assigned to the user.
+
+New Feature SPPRO-5180 (2026-11-02, Parking Lot → id 3): "Send to QA" (851) → Ready for QA; stayed assigned to the user. Staging flag via shared .env append (backup ~/env.bak-SPPRO-5180).
+
+Improvement SPPRO-5209 (2026-11-02, Parking Lot → id 3): "Send to QA" (851) → Ready for QA; stayed assigned to the user. The QA comment call timed out but had posted; read back with listJiraIssueComments before retrying.
+
+Bug SPPRO-4752 (2026-11-02, second round): "Ready for QA" (491) → Ready for QA; stayed assigned to Sarah Kirchner.
+
+Improvement SPPRO-5209 (2026-11-02, second round, mod-search fix): "Send to QA" (851) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5233 (2026-11-02, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Task SPPRO-5250 (2026-11-02, Parking Lot → id 3): "Send to QA" (851) → Ready for QA; stayed assigned to the user. Seeder-only staging step (new permission) was run by the user before posting QA instructions, so QA did not start on an unseeded staging.
+
+Bug SPPRO-5252 (2026-11-02, id 3 rejected from Parking Lot; entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5218 (2026-11-03, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5200 (2026-11-03, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5186 (2026-11-03, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5231 (2026-11-03, second round from Problem via 4 → 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5183 (2026-11-03, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. User chose no feature flag for the SubmitQuoteJob retry/alert change.
+Then the user said it "cannot be tested in staging so move it to Done": Ready for QA → Done (591); TT-881 → Done (41). Connection-failure/background-job fixes that QA cannot trigger on staging may skip QA; consider asking QA vs Done up front.
+
+Bug SPPRO-5221 (2026-11-03, second round from Problem via 4 → 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. QA comment @mentioned Sawyer via HTML.
+
+Bug SPPRO-5256 (2026-11-04, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. TT-882 mirrors it.
+Then the user said "move this one and tt-882 to done" (config-only fix, no QA): Ready for QA → Done (591), TT-882 → Done (41); stayed assigned to the user.
+
+Bug SPPRO-5267 (2026-11-05, second round from Problem): 4 → 651 → 721 → 181 worked; then "Ready for QA" (491) → Ready for QA; stayed assigned to the user. QA comment @mentioned Sawyer via HTML.

@@ -14,3 +14,4 @@ shape that `getJiraIssue` returns when reading comments is NOT accepted on write
 (seen on SPPRO-4318, 2026-10-14; fixed by editing the comment). Markdown comments can't carry mentions.
 
 Known account IDs: Nathaniel Jay Lee = 5aeb1c31d5c9632c3013ceaf; Mayas Knaizeh = 712020:d129d533-657d-488f-8b51-cc650565a92e; Sawyer DeWitt (QA) = 712020:70cf691d-8a4b-40d5-9aa7-1fe0ad33a41f.
+Andrew Gilbert = 712020:2efa6b66-981d-47f5-9a03-04c37d2d9536.

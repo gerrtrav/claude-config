@@ -96,3 +96,43 @@ Bug SPPRO-5101 (2026-10-22): 651 → 721 → 181 worked.
 Bug SPPRO-5135 (2026-10-22): 651 → 721 → 181 worked.
 
 Epic SPPRO-5144 (2026-10-26, Parking Lot): id 3 rejected with a 400, same as earlier epics; left for the user to move.
+
+Bug SPPRO-4929 (2026-10-30, second round from Problem): id 3 rejected with a 400; 4 → 651 → 721 → 181 worked, then "Ready for QA" (491) → Ready for QA (stayed assigned to Sawyer, the QA tester).
+
+Collector Bug SPPRO-5213 (2026-11-02): 651 → 721 → 181 worked; closed as duplicate with Done (591) + {"resolution": {"name": "Duplicate"}}.
+
+New Feature SPPRO-5180 (2026-11-02): Parking Lot → id 3 worked directly.
+
+New Feature SPPRO-4318 (2026-11-02, second round from Problem): 4 rejected with a 400; id 3 worked directly to In Progress; then "Send to QA" (851) → Ready for QA, stayed assigned to Sawyer.
+
+Improvement SPPRO-5209 (2026-11-02): Parking Lot → id 3 worked directly.
+
+Bug SPPRO-4752 (2026-11-02, second round from Problem): 4 → 651 → 721 → 181 worked.
+
+Bug SPPRO-4929 back from QA in "Problem" (2026-11-02) offered no Start Work or In Progress transition, only Parking Lot (4), Done, QA Test Again, Re-test. Path used: 4 → 651 → 721 → 181 to In Progress; afterwards "Ready for QA" (491) landed in status "Ready for QA" (10074).
+
+New Feature SPPRO-4318 (2026-11-02, third round from Problem): id 3 worked directly to In Progress; "Send to QA" (851) → Ready for QA, stayed assigned to Sawyer.
+
+Improvement SPPRO-5209 (2026-11-02, second round from Problem): "In Progress" by name rejected; id 3 worked directly.
+
+Bug SPPRO-5233 (2026-11-02): 651 → 721 → 181 worked.
+
+Task SPPRO-5250 (2026-11-02): Parking Lot → id 3 worked directly.
+
+Bug SPPRO-5218 (2026-11-03): 651 → 721 → 181 worked.
+
+Bug SPPRO-5200 (2026-11-03): 651 → 721 → 181 worked.
+
+Bug SPPRO-5186 (2026-11-03): 651 → 721 → 181 worked.
+
+Bug SPPRO-5231 (2026-11-03) in "Problem": id 3 rejected with a 400; 4 → 651 → 721 → 181 worked.
+
+Bug SPPRO-5183 (2026-11-03): id 3 rejected with a 400 from Parking Lot; 651 → 721 → 181 worked.
+
+Bug SPPRO-5256 (2026-11-04): 651 → 721 → 181 worked.
+
+Bug SPPRO-5231 (2026-11-04, in Problem after a QA round): neither Start Work (181) nor In Progress (1) (id 3) was offered; Problem listed only Parking Lot (4), Done (591), "QA Test Again" (11 → Ready for QA) and "Re-test" (12 → Ready For Testing = passed). The fix was made with the ticket left in Problem, then "QA Test Again" (11) sent it back to QA.
+
+Bug SPPRO-5231 (2026-11-04, round 4 from Problem): 4 → 651 → 721 → 181 worked again (unlike the earlier 11-04 round); then "Ready for QA" (491) → Ready for QA.
+
+Task SPPRO-4917 (2026-11-05, in Problem after QA): id 3 ("Fast-track") worked directly to In Progress; then "Send to QA" (851) → Ready for QA, stayed assigned to Sawyer.

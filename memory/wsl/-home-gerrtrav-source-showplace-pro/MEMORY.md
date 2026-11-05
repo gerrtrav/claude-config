@@ -37,8 +37,7 @@
 - [no-parallel-tests](no-parallel-tests.md) — Never use `artisan test --parallel` (no ParaTest; exits 0 without running tests); run serially
 - [full-test-suite-save-output](full-test-suite-save-output.md) — Full suite ~8 min (1890 tests): run_in_background + log file, never `&` or pgrep watchers; OA… account-key collisions are a known flake
 - [jira-qa-docs-subtasks-sarah](jira-qa-docs-subtasks-sarah.md) — QA/doc tickets for an epic → Tasks under the epic for Sarah Kirchner, Triage; never add blocking links to the QA or docs tickets (user does it); API cannot delete issues/links
-- [upload-size-tracking-waiting](upload-size-tracking-waiting.md) — SPPRO-4871 done 10-27 (1 GB, tracking removed); drop of upload_size_logs = SPPRO-5179, only after a1cc7460b is in prod
-- [livewire-flash-message-morph](livewire-flash-message-morph.md) — Flash message inside a Livewire component vanishes next update, shifts siblings → "Snapshot missing"; wrap it in an always-rendered div
+- [livewire-flash-message-morph](livewire-flash-message-morph.md) — Conditional element as a bare sibling of Livewire children (flash msg, SPPRO-5270 saving box) → morph re-creates children, replays mount events / "Snapshot missing"; wrap in always-rendered div
 - [jira-comment-mentions](jira-comment-mentions.md) — @mention in Jira comments: HTML span data-type="mention" data-user-id; the <custom> read shape posts as literal text
 - [dms-backfill-lost-files-pending](dms-backfill-lost-files-pending.md) — SPPRO-4975: 88 DMS files deleted by the backfill; parked awaiting the user's choice of fix
 - [production-single-web-server](production-single-web-server.md) — Prod has one web server; files queue workers write to storage/app are servable without shared storage
@@ -59,20 +58,37 @@
 - [sail-tinker-script-stdin](sail-tinker-script-stdin.md) — Pipe tinker scripts on stdin; a host /tmp path argument hangs
 - [composer-laravel11-block-insecure](composer-laravel11-block-insecure.md) — On Laravel 11 plain composer update fails (block-insecure); targeted updates; symfony/console held <7.4 until Laravel 12
 - [atlassian-mcp-timeout-writes-apply](atlassian-mcp-timeout-writes-apply.md) — Timed-out Jira MCP writes may still apply; read back before retrying
-- [dealer-portal-sso](dealer-portal-sso.md) — Dealer Portal is vendor WordPress, IP-restricted (no public pages); SSO role = portal-only users; SSO plan 2026-10-21
+- [dealer-portal-sso](dealer-portal-sso.md) — SSO epic SPPRO-5106 (tasks 5108-5112); Electric Pulp vendor; miniOrange ENTERPRISE since 11-02 (SLO is Enterprise-only, back-channel only); 11-04 miniOrange answers (manual config, no discovery; support plans extra); keep showplacedealerportal.com pending Marketing Director
 - [commands-for-user-in-final-message](commands-for-user-in-final-message.md) — Commands the user must run go in the final reply; mid-turn text did not reach them
 - [sppro-ready-for-testing-means-passed](sppro-ready-for-testing-means-passed.md) — SPPRO "Ready For Testing" = passed QA; "Ready for QA" = still needs QA; Problem sub-tasks only go to Done
 - [release-announcement-email](release-announcement-email.md) — After each prod release: create Jira release release-YYMMDD + fixVersions; draft Outlook email (shipped + waiting on QA) To Sarah Kirchner & Mayas Knaizeh, CC Andrew Gilbert
-- [staging-db-proxy-replica-lag](staging-db-proxy-replica-lag.md) — Staging DB host is a proxy splitting reads to a lagging replica; stale reads after redirects (SPPRO-2141/5104); how to query staging DB
+- [staging-db-proxy-replica-lag](staging-db-proxy-replica-lag.md) — Staging AND prod DB hosts are ProxySQL; staging reads go to master since 2026-10-28 (SPPRO-5104 Phase 1), prod still splits reads to a lagging replica (pro-api too); SPPRO-2141/5195; how to query staging DB
 - [staging-debugbar-disabled](staging-debugbar-disabled.md) — Staging APP_DEBUG=true; Debugbar off via DEBUGBAR_ENABLED=false since 2026-10-22 (its JS froze big Livewire pages); block it locally when profiling
-- [prodev-hook-edit-blocked](prodev-hook-edit-blocked.md) — Auto mode blocks ssh edits of prodev post-receive even with chat OK; give the user a `!` command
-- [proprod-diverged-cherry-pick](proprod-diverged-cherry-pick.md) — proprod master has SPPRO-5135 cherry-picks (release-261026-2); next full release needs `+master` force push
+- [prodev-hook-edit-blocked](prodev-hook-edit-blocked.md) — Auto mode blocks ssh edits of prodev post-receive and proprod shared .env even with chat OK; give the user a `!` command
 - [frontier-dmsfundprd-combined-dealers](frontier-dmsfundprd-combined-dealers.md) — Combined DMS dealers = Frontier DMSFUNDPRD.COMBINE_DEALERS (COMBI00001); DMSFUNDPRD has other DMS tables
 - [livewire-38-prod-404-rollback](livewire-38-prod-404-rollback.md) — prod Livewire 404s: partial release-261026-2 lacked SPPRO-3471 mod-key fix; release-261026-3 fixes; diff release vs master first
 - [legacy-site-retirement](legacy-site-retirement.md) — SPPRO-5144 legacy.showplacepro.biz retirement: file locations, shared docroot with proapi, user decisions, task keys 5145-5154
 - [shared-checkout-check-branch](shared-checkout-check-branch.md) — Other sessions share this checkout and switch branches; check current branch before rebase/merge
 - [users-email-stray-spaces](users-email-stray-spaces.md) — users.email can have trailing spaces; MariaDB matches them, so trim before keying PHP arrays by email
-- [catalog-2020-sharepoint-publish](catalog-2020-sharepoint-publish.md) — SPPRO-5162: 2020 catalogs via SharePoint + in-app Publish; site TBD; publishers Beth Roush + IT
-- [confluence-tech-docs-lean-pass](confluence-tech-docs-lean-pass.md) — Multi-day Confluence doc pass: parent page 681377793, days done/remaining, prod schema export in ~/schema-export for the data model page
+- [catalog-2020-sharepoint-publish](catalog-2020-sharepoint-publish.md) — SPPRO-5162: staging publish of BL64 worked 11-03; for prod, queue:restart after the .env edit; 5178 cleanup needs OK
+- [confluence-tech-docs-lean-pass](confluence-tech-docs-lean-pass.md) — Confluence tech docs pass DONE 10-28 (page ids, ~/schema-export, SPPRO-5182..5188, 5199..5207); deeper-dive 6-session plan; all 6 sessions DONE 11-03 (S6 reference pages: config 695664641, permissions matrix 695402498, services 695238659, testing 695173125; SPPRO-5256)
 - [confluence-update-tech-docs-on-feature-change](confluence-update-tech-docs-on-feature-change.md) — When changing/adding a feature, update the matching page under Confluence "Showplace Pro Technical Documentation" (681377793)
-- [frontier-db2-driver-laravel13](frontier-db2-driver-laravel13.md) — BWI db2-driver abandoned, max Laravel 12; easi-power/laravel-db2 v14 = Laravel 13 path (Print App staging uses it)
+- [frontier-db2-driver-laravel13](frontier-db2-driver-laravel13.md) — BWI db2-driver abandoned, works only to Laravel 11 (crashes on 12: Grammar ctor); easi-power 13.0.x = Laravel 12, v14 = Laravel 13
+- [dms-balance-adjustment-1pct-direct-url](dms-balance-adjustment-1pct-direct-url.md) — 1% dealers have no Submit Request button; balance adjustments via /dms/create/{account}
+- [document-upload-test-deploy-hold](document-upload-test-deploy-hold.md) — Test site runs main since 2026-10-28 (hold superseded); DU-13 4e33cfb still not in main
+- [document-upload-tests-hit-frontier](document-upload-tests-hit-frontier.md) — document-upload tests ran migrate:fresh on real DB2 DOCUPLDEV (2026-10-27); never run them unless phpunit.xml forces sqlite
+- [update-pro-api-submodule-script](update-pro-api-submodule-script.md) — "Update the pro-api submodule" = run ./update-pro-api --push <KEY> (develop → docker-changes, keeps Sail DB changes)
+- [weathered-block-sppro-5208](weathered-block-sppro-5208.md) — SPPRO-5208: pro-api 4783f554 unblocked Weathered on all doors; temp prod patch incl. Sarah's door list changes
+- [nightwatch-comment-waf-block](nightwatch-comment-waf-block.md) — Nightwatch comments with /etc paths get Cloudflare-blocked; use plain prose, details on Jira
+- [prod-dns-via-tailscale](prod-dns-via-tailscale.md) — proprod DNS all via DERP-relayed Tailscale; ~20s stalls → Resolving timed out (mostly proapi); SPPRO-5212 hosts fix live 11-03
+- [pro-api-prod-patch-sppro-5195](pro-api-prod-patch-sppro-5195.md) — SPPRO-5195 lineConfigure patch live on prod 10-28, awaiting Jay develop commit; jaylee-owned pro-api files need sudo cp
+- [dms-year-end-zero-out](dms-year-end-zero-out.md) — SPPRO-5222 fix live in prod since release-261030 (10-30); 2025 request_details mismatch: user declined a ticket
+- [pint-changed-files-only](pint-changed-files-only.md) — Run Pint on changed files only, never dirs; stage by name; zsh no word-split
+- [scheduler-systemd-killmode](scheduler-systemd-killmode.md) — laravel-schedule.service oneshot KillMode=control-group kills runInBackground tasks; drop-in + flag on both servers; code live on prod since release-261030-2 (2026-11-02) (SPPRO-5205)
+- [species-check-pending-api](species-check-pending-api.md) — SPPRO-5193 species check merged, flag off on staging, waiting on Jay's SPPRO-5191; Confluence docs at go-live
+- [confluence-user-guide-plan](confluence-user-guide-plan.md) — Staff user guide planned 11-03 (plan page 695173148, space root, screenshots from local, Sarah reviews, 5 sessions); NOT started until the user says go
+- [user-agents-mirrored](user-agents-mirrored.md) — ~/.claude/agents kept in WSL and Windows; code-search (haiku) for read-only lookups
+- [quote-switching-permissions-flag](quote-switching-permissions-flag.md) — SPPRO-5186 quote switching by permission behind FEATURE_QUOTE_SWITCHING_PERMISSIONS_ENABLED; prod needs seeders + cache reset before flipping
+- [resource-documents-private-plan](resource-documents-private-plan.md) — SPPRO-5249 plan posted 11-04 (comment 53607), NOT started; Linode volume kept, private disk root, quarantine orphans; catalogs follow-up SPPRO-5264
+- [rep-approval-dedupe-prod-pending](rep-approval-dedupe-prod-pending.md) — SPPRO-5267: run the duplicate rep-approval cleanup on PROD after release (a person runs it); staging done 11-05
+- [proprod-tinker-psysh-blocked](proprod-tinker-psysh-blocked.md) — tinker as www-data fails on proprod (psysh /var/www/.config); use a bootstrap PHP script via sudo -u www-data php8.2
