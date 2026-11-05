@@ -5,6 +5,7 @@ Backup of my Claude Code settings for WSL (Ubuntu) and Windows.
 | Path | What | Restored to |
 |---|---|---|
 | `CLAUDE.md` | Global instructions (shared) | `~/.claude/CLAUDE.md` (symlink) and `C:\Users\<me>\.claude\CLAUDE.md` (copy) |
+| `docs/` | Detail files `CLAUDE.md` points to (shared) | `~/.claude/docs` (symlink) and `C:\Users\<me>\.claude\docs\` (copies) |
 | `wsl/` | WSL `settings.json`, `statusline.sh`, `hooks/` | `~/.claude/` (symlinks) |
 | `windows/` | Windows `settings.json`, `statusline.sh`, `hooks/` | `C:\Users\<me>\.claude\` (copies) |
 | `memory/wsl/<project>/` | Per-project auto-memory | `~/.claude/projects/<project>/memory` (symlinks) |

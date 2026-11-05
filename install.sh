@@ -27,6 +27,7 @@ link() {
 
 if [ "${1:-}" = "--pull-windows" ]; then
     cp "$win/CLAUDE.md" "$repo/CLAUDE.md"
+    mkdir -p "$repo/docs" && cp "$win"/docs/*.md "$repo/docs/"
     cp "$win/settings.json" "$win/statusline.sh" "$repo/windows/"
     cp "$win/hooks/notify-windows.ps1" "$repo/windows/hooks/"
     for d in "$win"/projects/*/memory; do
@@ -38,6 +39,7 @@ fi
 
 # WSL
 link CLAUDE.md "$claude/CLAUDE.md"
+link docs "$claude/docs"
 link wsl/settings.json "$claude/settings.json"
 link wsl/statusline.sh "$claude/statusline.sh"
 link wsl/hooks "$claude/hooks"
@@ -57,6 +59,7 @@ fi
 if [ -d "/mnt/c/Users/${win_user:-$USER}" ]; then
     mkdir -p "$win/hooks"
     cp "$repo/CLAUDE.md" "$win/CLAUDE.md"
+    mkdir -p "$win/docs" && cp "$repo"/docs/*.md "$win/docs/"
     cp "$repo/windows/settings.json" "$repo/windows/statusline.sh" "$win/"
     cp "$repo/windows/hooks/notify-windows.ps1" "$win/hooks/"
     for d in "$repo"/memory/windows/*/; do
