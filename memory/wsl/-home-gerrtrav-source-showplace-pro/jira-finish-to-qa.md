@@ -147,3 +147,23 @@ Bug SPPRO-5256 (2026-11-04, entered via 651 → 721 → 181): "Ready for QA" (49
 Then the user said "move this one and tt-882 to done" (config-only fix, no QA): Ready for QA → Done (591), TT-882 → Done (41); stayed assigned to the user.
 
 Bug SPPRO-5267 (2026-11-05, second round from Problem): 4 → 651 → 721 → 181 worked; then "Ready for QA" (491) → Ready for QA; stayed assigned to the user. QA comment @mentioned Sawyer via HTML.
+
+Improvement SPPRO-4591 (2026-11-09, second round from Problem → "Fast-track" id 3): "Send to QA" (851) → Ready for QA; stayed assigned to Sawyer. QA comment @mentioned Sawyer via HTML.
+
+Improvement SPPRO-5272 (2026-11-09, Parking Lot → id 3): "Send to QA" (851) → Ready for QA; stayed assigned to the user. TT-897 mirrors it.
+
+Bug SPPRO-5229 (2026-11-09, second round from Problem): Problem now offers "QA Test Again" (id 11) straight to Ready for QA, so no 4 → 651 → 721 → 181 detour was needed; stayed assigned to the user. QA comment @mentioned Sawyer via HTML.
+
+Bug SPPRO-5279 (2026-11-10, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. Push was first rejected (another session had pushed SPPRO-4671..4674, prodev one commit ahead of origin); rebased onto prodev/master, migrated, reran tests, pushed both, which also carried that commit to origin.
+
+Improvement SPPRO-4595 (2026-11-11, QA'd while still In Progress and assigned to Sawyer): In Progress offers no route to "Ready For Testing" (only Done 591, Send to QA 851, Parking Lot, Hold). Once Sawyer confirmed it passed, the user chose Done (591) in one step instead of going through Ready for QA; it stayed assigned to Sawyer. TT-900 → Done (41).
+
+Bug SPPRO-5286 (2026-11-11, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. QA comment @mentioned Sawyer with an open question (count cabinets+mods vs cabinets only). TT-902 mirrors it.
+
+Improvement SPPRO-5290 (2026-11-11, Parking Lot → id 3): "Send to QA" (851) → Ready for QA; stayed assigned to the user. Staging flag appended to shared .env (backup ~/env.bak-SPPRO-5290).
+
+Bug SPPRO-5298 (2026-11-11): "Send to QA" (491) from In Progress → Ready for QA; stayed assigned to the user.
+
+Bug SPPRO-5296 (2026-11-11, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. Staging flag FEATURE_METAL_DOOR_REPRICE_ENABLED appended to shared .env (backup ~/env.bak-SPPRO-5296).
+
+Bug SPPRO-5297 (2026-11-11, entered via 651 → 721 → 181): "Ready for QA" (491) → Ready for QA; stayed assigned to the user. Staging flag FEATURE_METAL_DOOR_DELETE_CONFIRM_ENABLED appended to shared .env (backup ~/env.bak-SPPRO-5297). TT-908/TT-910 mirror it.

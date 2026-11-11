@@ -1,17 +1,18 @@
 ---
 name: release-announcement-email
-description: "After each production release (release-YYMMDD), draft an Outlook release email: what shipped + what's waiting on QA; To Sarah Kirchner & Mayas Knaizeh, CC Andrew Gilbert"
+description: "After each production release (release-YYMMDD), draft an Outlook release email: what shipped + what's waiting on QA; To Sarah Kirchner, Mayas Knaizeh & Samantha Fodness, CC Andrew Gilbert"
 metadata:
   node_type: memory
   type: feedback
   originSessionId: 5aea40f6-1597-421d-bb7f-350739910d19
-  modified: 2026-10-22T12:18:24.907Z
+  modified: 2026-11-10T00:00:00.000Z
 ---
 
 After a release-YYMMDD tag is deployed to production and verified, draft (do not send) an Outlook email with
 `outlook_create_draft`:
 
-- **To:** Sarah.Kirchner@showplacecabinetry.com, Mayas.Knaizeh@showplacecabinetry.com
+- **To:** Sarah.Kirchner@showplacecabinetry.com, Mayas.Knaizeh@showplacecabinetry.com,
+  Samantha.Fodness@showplacecabinetry.com (added at the user's request 2026-11-10)
 - **CC:** Andrew.Gilbert@showplacecabinetry.com
 - **Subject:** `ShowplacePro production update: release YYMMDD`
 - **Body (HTML), plain language, each item linked to its Jira ticket:**

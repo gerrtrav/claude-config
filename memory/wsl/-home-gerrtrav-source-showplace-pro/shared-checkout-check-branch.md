@@ -12,3 +12,5 @@ On 2026-10-26 (SPPRO-5146), while my full test suite ran (~8 min), another sessi
 **How to apply:** before landing, run `git branch --show-current` and `git status` and stop if it isn't my branch; rebase by name (`git rebase master <my-branch>`). For long-running work, consider a worktree ([[worktree-test-setup]]). If I do switch someone's checkout, tell the user right away.
 
 Same day (SPPRO-5148): I pushed prodev first, then origin was rejected because the SPPRO-5156 session had pushed origin (not prodev) meanwhile. Rebasing onto origin/master then needed a force push to prodev, which the auto-mode classifier blocks ([Git Destructive]); the user had to run it. **Fetch origin and rebase BEFORE pushing prodev**, and push origin first, so prodev never gets commits that origin will reject.
+
+Also check `git log prodev/master..master` right before pushing, not just after landing: on 2026-11-11 (SPPRO-5286) another session committed SPPRO-5291 docs to master between landing and pushing, and they went out with the push (harmless, docs only).

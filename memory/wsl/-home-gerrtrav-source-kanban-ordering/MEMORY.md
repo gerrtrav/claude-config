@@ -1,2 +1,4 @@
 - [EVOX Jira workflow](evox-jira-workflow.md) — required create fields; Done needs Component + Assignee set first; Parking Lot tickets can't be moved to In Progress by the user
 - [EVOX-730 DB objects deployed](evox-730-db-objects-deployed.md) — reorder-point view + missing-item log table live on Insight since 2026-10-07
+- [onbear tests hit Frontier](onbear-tests-hit-frontier.md) — test suite runs migrate:fresh on ONBEARTST (shared with staging); never run until phpunit.xml fixed
+- [rework tests hit Frontier](rework-tests-hit-frontier.md) — RefreshDatabase + DB_CONNECTION=frontier; only run offline in a container with sqlite :memory:

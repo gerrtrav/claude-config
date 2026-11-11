@@ -136,3 +136,24 @@ Bug SPPRO-5231 (2026-11-04, in Problem after a QA round): neither Start Work (18
 Bug SPPRO-5231 (2026-11-04, round 4 from Problem): 4 → 651 → 721 → 181 worked again (unlike the earlier 11-04 round); then "Ready for QA" (491) → Ready for QA.
 
 Task SPPRO-4917 (2026-11-05, in Problem after QA): id 3 ("Fast-track") worked directly to In Progress; then "Send to QA" (851) → Ready for QA, stayed assigned to Sawyer.
+
+Improvement SPPRO-5272 (2026-11-09): Parking Lot → id 3 worked directly.
+
+Task SPPRO-5145 (2026-11-10, in Problem after QA): id 3 worked directly to In Progress; then "Send to QA" (851) → Ready for QA.
+
+Bug SPPRO-5279 (2026-11-10): id 3 not tried; 651 → 721 → 181 worked.
+
+Bug SPPRO-5286 (2026-11-11): 651 → 721 → 181 worked.
+
+Improvement SPPRO-4587 (2026-11-11, in Problem with QA passed): Problem offered Fast-track (3), Done (591), Parking Lot (751), "QA Test Again" (801) and "Re-test" (831 → Ready For Testing = passed); the older ids 12/11/4 were rejected with a 400. List the transitions over REST (`/issue/KEY/transitions`) rather than assuming ids.
+
+Improvement SPPRO-5290 (2026-11-11): Parking Lot → id 3 worked directly.
+Bug SPPRO-5286 (2026-11-11, back from Problem): id 3 rejected with a 400; 4 → 651 → 721 → 181 worked.
+
+Bug SPPRO-5298 (2026-11-11): 651 → 721 → 181 worked.
+
+Bug SPPRO-5296 (2026-11-11): 651 → 721 → 181 worked.
+
+Improvement SPPRO-5290 (2026-11-11, round 2 from Problem): id 3 worked directly to In Progress; "Send to QA" (851) → Ready for QA.
+
+Bug SPPRO-5297 (2026-11-11): 651 → 721 → 181 worked.

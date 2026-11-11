@@ -61,7 +61,7 @@
 - [dealer-portal-sso](dealer-portal-sso.md) — SSO epic SPPRO-5106 (tasks 5108-5112); Electric Pulp vendor; miniOrange ENTERPRISE since 11-02 (SLO is Enterprise-only, back-channel only); 11-04 miniOrange answers (manual config, no discovery; support plans extra); keep showplacedealerportal.com pending Marketing Director
 - [commands-for-user-in-final-message](commands-for-user-in-final-message.md) — Commands the user must run go in the final reply; mid-turn text did not reach them
 - [sppro-ready-for-testing-means-passed](sppro-ready-for-testing-means-passed.md) — SPPRO "Ready For Testing" = passed QA; "Ready for QA" = still needs QA; Problem sub-tasks only go to Done
-- [release-announcement-email](release-announcement-email.md) — After each prod release: create Jira release release-YYMMDD + fixVersions; draft Outlook email (shipped + waiting on QA) To Sarah Kirchner & Mayas Knaizeh, CC Andrew Gilbert
+- [release-announcement-email](release-announcement-email.md) — After each prod release: create Jira release release-YYMMDD + fixVersions; draft Outlook email (shipped + waiting on QA) To Sarah Kirchner, Mayas Knaizeh & Samantha Fodness, CC Andrew Gilbert
 - [staging-db-proxy-replica-lag](staging-db-proxy-replica-lag.md) — Staging AND prod DB hosts are ProxySQL; staging reads go to master since 2026-10-28 (SPPRO-5104 Phase 1), prod still splits reads to a lagging replica (pro-api too); SPPRO-2141/5195; how to query staging DB
 - [staging-debugbar-disabled](staging-debugbar-disabled.md) — Staging APP_DEBUG=true; Debugbar off via DEBUGBAR_ENABLED=false since 2026-10-22 (its JS froze big Livewire pages); block it locally when profiling
 - [prodev-hook-edit-blocked](prodev-hook-edit-blocked.md) — Auto mode blocks ssh edits of prodev post-receive and proprod shared .env even with chat OK; give the user a `!` command
@@ -72,7 +72,7 @@
 - [users-email-stray-spaces](users-email-stray-spaces.md) — users.email can have trailing spaces; MariaDB matches them, so trim before keying PHP arrays by email
 - [catalog-2020-sharepoint-publish](catalog-2020-sharepoint-publish.md) — SPPRO-5162: staging publish of BL64 worked 11-03; for prod, queue:restart after the .env edit; 5178 cleanup needs OK
 - [confluence-tech-docs-lean-pass](confluence-tech-docs-lean-pass.md) — Confluence tech docs pass DONE 10-28 (page ids, ~/schema-export, SPPRO-5182..5188, 5199..5207); deeper-dive 6-session plan; all 6 sessions DONE 11-03 (S6 reference pages: config 695664641, permissions matrix 695402498, services 695238659, testing 695173125; SPPRO-5256)
-- [confluence-update-tech-docs-on-feature-change](confluence-update-tech-docs-on-feature-change.md) — When changing/adding a feature, update the matching page under Confluence "Showplace Pro Technical Documentation" (681377793)
+- [confluence-update-tech-docs-on-feature-change](confluence-update-tech-docs-on-feature-change.md) — Feature change → update docs/confluence/ markdown in the same branch; never edit those Confluence pages or publish yourself
 - [frontier-db2-driver-laravel13](frontier-db2-driver-laravel13.md) — BWI db2-driver abandoned, works only to Laravel 11 (crashes on 12: Grammar ctor); easi-power 13.0.x = Laravel 12, v14 = Laravel 13
 - [dms-balance-adjustment-1pct-direct-url](dms-balance-adjustment-1pct-direct-url.md) — 1% dealers have no Submit Request button; balance adjustments via /dms/create/{account}
 - [document-upload-test-deploy-hold](document-upload-test-deploy-hold.md) — Test site runs main since 2026-10-28 (hold superseded); DU-13 4e33cfb still not in main
@@ -88,7 +88,14 @@
 - [species-check-pending-api](species-check-pending-api.md) — SPPRO-5193 species check merged, flag off on staging, waiting on Jay's SPPRO-5191; Confluence docs at go-live
 - [confluence-user-guide-plan](confluence-user-guide-plan.md) — Staff user guide planned 11-03 (plan page 695173148, space root, screenshots from local, Sarah reviews, 5 sessions); NOT started until the user says go
 - [user-agents-mirrored](user-agents-mirrored.md) — ~/.claude/agents kept in WSL and Windows; code-search (haiku) for read-only lookups
-- [quote-switching-permissions-flag](quote-switching-permissions-flag.md) — SPPRO-5186 quote switching by permission behind FEATURE_QUOTE_SWITCHING_PERMISSIONS_ENABLED; prod needs seeders + cache reset before flipping
+- [quote-switching-permissions-flag](quote-switching-permissions-flag.md) — SPPRO-5186 quote switching by permission; flag on in prod since 2026-11-10 (targeted permission script, not seeders)
 - [resource-documents-private-plan](resource-documents-private-plan.md) — SPPRO-5249 plan posted 11-04 (comment 53607), NOT started; Linode volume kept, private disk root, quarantine orphans; catalogs follow-up SPPRO-5264
 - [rep-approval-dedupe-prod-pending](rep-approval-dedupe-prod-pending.md) — SPPRO-5267: run the duplicate rep-approval cleanup on PROD after release (a person runs it); staging done 11-05
 - [proprod-tinker-psysh-blocked](proprod-tinker-psysh-blocked.md) — tinker as www-data fails on proprod (psysh /var/www/.config); use a bootstrap PHP script via sudo -u www-data php8.2
+- [queue-attempts-tinyint-blocks-queue](queue-attempts-tinyint-blocks-queue.md) — Job released past 255 attempts blocks the database queue (jobs.attempts tinyint); check jobs table first when queued work stalls (SPPRO-5277)
+- [staging-typesense-reindex](staging-typesense-reindex.md) — Staging search fails on missing `embedding` = stale Typesense collections; rebuild parts/mods via scout:delete-index + import as www-data (~18 min)
+- [production-config-cached](production-config-cached.md) — Prod config cached since 2026-11-10; .env edits need config:cache + queue:restart; deploy hook does not re-cache
+- [du-finish-to-qa](du-finish-to-qa.md) — DU tickets to QA: land, push origin + `test` (staging), QA comment, assign Sarah Kirchner, transition In Review (no QA status)
+- [sawyer-dewitt-qa-tester](sawyer-dewitt-qa-tester.md) — Sawyer DeWitt = SPPRO QA tester, he/him; Jira accountId for mentions
+- [confluence-docs-repo-sync](confluence-docs-repo-sync.md) — SPPRO-5291: Confluence Technical Documentation tree (681377793) → repo markdown + publish script; also document-upload DU-118 (whole DU space) , colorselectordering CSO-83, kanban_ordering EVOX-905 and cdc-documenation CDCDOCS-143; own token now, service account via ITHD-3703 later
+- [mod-dialog-short-list-sppro-5298](mod-dialog-short-list-sppro-5298.md) — Empty Add Modification dialog = modSearchList <=50 mods (Longview 33); flag ModSearchForShortModListsFeature
