@@ -5,6 +5,9 @@
 #   ec-sync [--dry-run] [--skip-images] [--skip-db] <proprod|prodev>
 #   ec-sync --setup <host> <source|target>     # one-time MySQL user + ~/.ec-sync.cnf on a host
 #
+# Target DB connection: ~/.ec-sync.cnf on the target if it exists (proprod: local MariaDB, the ProxySQL master),
+# otherwise the app's own DB_* settings from its .env (prodev: no local MySQL; the DB is behind ProxySQL).
+#
 # Order of operations:
 #   1. Dump electronic_catalog on app (read-only `ec_sync` MySQL user) into a local temp file and sanity-check it.
 #   2. rsync catalog-images app -> local showplace-pro checkout -> target.
@@ -32,7 +35,52 @@ LOCK_FILE=${XDG_RUNTIME_DIR:-/tmp}/ec-sync.lock
 
 # Expanded on the remote host, not locally.
 REMOTE_CNF='$HOME/.ec-sync.cnf'
-REMOTE_BACKUP_DIR='$HOME/ec-sync-backups'
+
+# Runs on the target: ping | backup <stamp> <keep> | import (dump on stdin).
+# Uses ~/.ec-sync.cnf when present, else the app's DB_* settings from its .env (password passed via MYSQL_PWD,
+# never on the command line or printed).
+TARGET_DB_SH=$(cat <<'REMOTE'
+set -euo pipefail
+db=$1 env_file=$2 mode=$3
+shift 3
+cnf=$HOME/.ec-sync.cnf
+if [[ -r $cnf ]]; then
+    conn=(--defaults-file="$cnf")
+    via="ec_sync ($cnf)"
+else
+    [[ -r $env_file ]] || { echo "no $cnf and can't read $env_file" >&2; exit 1; }
+    get() { sed -n "s/^$1=//p" "$env_file" | tail -n 1 | sed -E "s/^([\"'])(.*)\1\$/\2/"; }
+    host=$(get DB_HOST) port=$(get DB_PORT) user=$(get DB_USERNAME)
+    MYSQL_PWD=$(get DB_PASSWORD)
+    export MYSQL_PWD
+    [[ -n $host && -n $user ]] || { echo "DB_HOST/DB_USERNAME missing from $env_file" >&2; exit 1; }
+    conn=(-h "$host" -P "${port:-3306}" -u "$user")
+    via="$user@$host (app .env)"
+fi
+case $mode in
+    ping)
+        mysql "${conn[@]}" -e 'SELECT 1' "$db" > /dev/null
+        echo "$(hostname): $db via $via"
+        ;;
+    backup)
+        stamp=$1 keep=$2 dir=$HOME/ec-sync-backups
+        mkdir -p "$dir"
+        mysqldump "${conn[@]}" --single-transaction --no-tablespaces "$db" | gzip > "$dir/$db-$stamp.sql.gz"
+        ls -1t "$dir"/"$db"-*.sql.gz | tail -n +$((keep + 1)) | xargs -r rm --
+        ;;
+    import)
+        mysql "${conn[@]}" "$db"
+        ;;
+    *) echo "unknown mode $mode" >&2; exit 1 ;;
+esac
+REMOTE
+)
+TARGET_DB_B64=$(printf '%s' "$TARGET_DB_SH" | base64 -w0)
+
+# target_db <mode> [args...] — run TARGET_DB_SH on $TARGET; stdin passes through (for import).
+target_db() {
+    ssh "$TARGET" "bash -c \"\$(echo $TARGET_DB_B64 | base64 -d)\" ec-sync-db $DB $TARGET_APP/.env $*"
+}
 
 usage() {
     sed -n '3,7p' "$0" | sed 's/^# \{0,1\}//'
@@ -123,10 +171,10 @@ log "Syncing $DB from $SOURCE_HOST to $TARGET"
 
 if ! ((SKIP_DB)); then
     STEP="preflight"
-    for host in "$SOURCE_HOST" "$TARGET"; do
-        ssh "$host" "mysql --defaults-file=$REMOTE_CNF -e 'SELECT 1' $DB > /dev/null" \
-            || die "can't connect to MySQL as ec_sync on $host — run: ec-sync --setup $host $([[ $host == "$SOURCE_HOST" ]] && echo source || echo target)"
-    done
+    ssh "$SOURCE_HOST" "mysql --defaults-file=$REMOTE_CNF -e 'SELECT 1' $DB > /dev/null" \
+        || die "can't connect to MySQL as ec_sync on $SOURCE_HOST — run: ec-sync --setup $SOURCE_HOST source"
+    target_db ping \
+        || die "can't connect to $DB on $TARGET (via ~/.ec-sync.cnf or $TARGET_APP/.env DB_* settings)"
 
     STEP="dump on $SOURCE_HOST"
     log "Dumping $DB on $SOURCE_HOST"
@@ -161,18 +209,14 @@ fi
 if ! ((SKIP_DB)) && ! ((DRY_RUN)); then
     STEP="backup on $TARGET"
     log "Backing up $DB on $TARGET"
-    ssh "$TARGET" "set -euo pipefail
-        mkdir -p $REMOTE_BACKUP_DIR
-        mysqldump --defaults-file=$REMOTE_CNF --single-transaction --no-tablespaces $DB \
-            | gzip > $REMOTE_BACKUP_DIR/$DB-$STAMP.sql.gz
-        ls -1t $REMOTE_BACKUP_DIR/$DB-*.sql.gz | tail -n +$((BACKUP_KEEP + 1)) | xargs -r rm --"
+    target_db backup "$STAMP" "$BACKUP_KEEP"
 
     STEP="import on $TARGET"
     log "Importing $DB on $TARGET"
     # The view's DEFINER is root@localhost, which ec_sync isn't allowed to set; let it default to ec_sync.
     zcat "$WORK/dump.sql.gz" \
         | sed -E 's/DEFINER=`[^`]+`@`[^`]+`//' \
-        | ssh "$TARGET" "mysql --defaults-file=$REMOTE_CNF $DB"
+        | target_db import
 
     STEP="scout:import on $TARGET"
     log "Re-indexing search on $TARGET: ${SEARCH_MODELS[*]}"
